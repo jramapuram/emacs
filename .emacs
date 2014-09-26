@@ -1,10 +1,32 @@
 (require 'package)
-;; (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
-(package-initialize)
-
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.milkbox.net/packages/")))
+(package-initialize)
+
+(defun ensure-package-installed (&rest packages)
+  "Assure every package is installed, ask for installation if it’s not.
+
+Return a list of installed packages or nil for every skipped package."
+  (mapcar
+   (lambda (package)
+     ;; (package-installed-p 'evil)
+     (if (package-installed-p package)
+         nil
+       (if (y-or-n-p (format "Package %s is missing. Install it? " package))
+           (package-install package)
+         package)))
+   packages))
+
+;; make sure to have downloaded archive description.
+;; Or use package-archive-contents as suggested by Nicolas Dudebout
+(or (file-exists-p package-user-dir)
+    (package-refresh-contents))
+
+(ensure-package-installed 'auto-complete 'dirtree 'yasnippet 'auto-complete-c-headers) ;  --> (nil nil) if iedit and magit are already installed
+
+;; activate installed packages
+(package-initialize)
 
 (require 'auto-complete)
 (require 'auto-complete-config)
@@ -23,7 +45,9 @@
 (add-hook 'c++-mode-hook 'my:ac-c-header-init)
 (add-hook 'c-mode-hook 'my:ac-c-header-init)
 
-(setq-default line-spacing 2)
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
-;; Replace "sbcl" with the path to your implementation
-(setq inferior-lisp-program "/usr/local/bin/sbcl")
+;; slime / quicklisp related
+;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
+;; (setq inferior-lisp-program "/usr/local/bin/sbcl")
+
+(setq-default tab-width 2)
+
