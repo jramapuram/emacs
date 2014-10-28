@@ -64,3 +64,4 @@ Return a list of installed packages or nil for every skipped package."
 (setq-default tab-width 2)
 
 (put 'erase-buffer 'disabled nil)
+(setq make-backup-files nil)
