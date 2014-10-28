@@ -49,17 +49,24 @@ Return a list of installed packages or nil for every skipped package."
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; (setq inferior-lisp-program "/usr/local/bin/sbcl")
 
-(defun copy-from-osx ()
-  (shell-command-to-string "pbpaste"))
+;; check OS type
+(cond
+ ((string-equal system-type "darwin")   ; Mac OS X
+  (progn
+    (defun copy-from-osx ()
+      (shell-command-to-string "pbpaste"))
 
-(defun paste-to-osx (text &optional push)
-  (let ((process-connection-type nil))
-    (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
-      (process-send-string proc text)
-      (process-send-eof proc))))
+    (defun paste-to-osx (text &optional push)
+      (let ((process-connection-type nil))
+        (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+          (process-send-string proc text)
+          (process-send-eof proc))))
 
-(setq interprogram-cut-function 'paste-to-osx)
-(setq interprogram-paste-function 'copy-from-osx)
+    (setq interprogram-cut-function 'paste-to-osx)
+    (setq interprogram-paste-function 'copy-from-osx)
+    )
+  )
+ )
 
 (setq-default tab-width 2)
 
