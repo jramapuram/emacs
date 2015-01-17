@@ -23,7 +23,7 @@ Return a list of installed packages or nil for every skipped package."
 (or (file-exists-p package-user-dir)
     (package-refresh-contents))
 
-(ensure-package-installed 'auto-complete 'dirtree 'yasnippet 'auto-complete-c-headers) ;  --> (nil nil) if iedit and magit are already installed
+(ensure-package-installed 'auto-complete 'dirtree 'yasnippet 'auto-complete-c-headers 'cmake-mode) ;  --> (nil nil) if iedit and magit are already installed
 
 ;; activate installed packages
 (package-initialize)
@@ -33,6 +33,8 @@ Return a list of installed packages or nil for every skipped package."
 (require 'dirtree)
 
 (ac-config-default)
+(global-auto-complete-mode t)
+;; (add-to-list 'ac-modes 'c++-mode)
 
 (require 'yasnippet)
 (yas-global-mode 1)
