@@ -23,7 +23,7 @@ Return a list of installed packages or nil for every skipped package."
 (or (file-exists-p package-user-dir)
     (package-refresh-contents))
 
-(ensure-package-installed 'auto-complete 'auto-complete-auctex 'dirtree 'yasnippet 'auto-complete-c-headers 'cmake-mode 'rust-mode 'auctex 'company) ;  --> (nil nil) if iedit and magit are already installed
+(ensure-package-installed 'auto-complete 'auto-complete-auctex 'yasnippet 'auto-complete-c-headers 'cmake-mode 'rust-mode 'auctex 'company 'multiple-cursors) ;  --> (nil nil) if iedit and magit are already installed
 
 ;; activate installed packages
 (package-initialize)
@@ -31,8 +31,9 @@ Return a list of installed packages or nil for every skipped package."
 (require 'auto-complete)
 (require 'auto-complete-config)
 (require 'auto-complete-auctex)
-(require 'dirtree)
 (require 'company)
+(require 'multiple-cursors)
+(require 'neotree)
 
 (ac-config-default)
 (global-auto-complete-mode t)
@@ -71,6 +72,15 @@ Return a list of installed packages or nil for every skipped package."
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
 
+; Generic stuff
+;(global-set-key (kbd "C-c C-c") 'mc/edit-lines)
+(setq transient-mark-mode nil)
+(global-set-key (kbd "C-c C-c") 'mc/mark-pop)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(global-set-key [f8] 'neotree-toggle)
+(setq tramp-default-method "ssh")
 (setq-default tab-width 2)
 (put 'erase-buffer 'disabled nil)
 (setq make-backup-files nil)
