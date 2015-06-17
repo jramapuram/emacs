@@ -42,27 +42,29 @@ Return a list of installed packages or nil for every skipped package."
 (require 'yasnippet)
 (yas-global-mode 1)
 
+;; C/C++ Related
 (defun my:ac-c-header-init ()
   (require 'auto-complete-c-headers)
   (add-to-list 'ac-sources 'ac-source-c-headers)
   (add-to-list 'achead:include-directories '"/usr/include /usr/local/include /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/"))
-
 (add-hook 'c++-mode-hook 'my:ac-c-header-init)
 (add-hook 'c-mode-hook 'my:ac-c-header-init)
+(setq c-default-style "linux" c-basic-offset 2)
 
 ;; slime / quicklisp related
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; (setq inferior-lisp-program "/usr/local/bin/sbcl")
 
-;Rust mode
+;; Rust mode
 (autoload 'rust-mode "rust-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
 (setq racer-rust-src-path "/usr/local/include/rust/src")
 (setq racer-cmd "~/Dropbox/Apps/racer/target/release/racer")
 (add-to-list 'load-path "~/Dropbox/Apps/racer/editors/emacs")
 (eval-after-load "rust-mode" '(require 'racer))
+(setq rust-indent-method-chain "rust-align-to-method-chain" rust-indent-offset 2)
 
-; Latex related
+;; Latex related
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 (setq-default TeX-master nil)
@@ -72,13 +74,19 @@ Return a list of installed packages or nil for every skipped package."
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
 
-; Generic stuff
+;; Multiple cursor related
 ;(global-set-key (kbd "C-c C-c") 'mc/edit-lines)
 (setq transient-mark-mode nil)
 (global-set-key (kbd "C-c C-c") 'mc/mark-pop)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+;; Generic
+(show-paren-mode 1)
+(electric-pair-mode 1)
+(setq shell-file-name "bash")
+(global-set-key [f1] 'shell)
 (global-set-key [f8] 'neotree-toggle)
 (setq tramp-default-method "ssh")
 (setq-default tab-width 2)
