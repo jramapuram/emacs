@@ -86,7 +86,7 @@ Return a list of installed packages or nil for every skipped package."
 (show-paren-mode 1)
 (electric-pair-mode 1)
 (setq shell-file-name "bash")
-(global-set-key [f1] 'shell)
+(global-set-key [f1] 'eshell)
 (global-set-key [f8] 'neotree-toggle)
 (setq tramp-default-method "ssh")
 (setq-default tab-width 2)
