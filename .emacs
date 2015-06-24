@@ -23,7 +23,7 @@ Return a list of installed packages or nil for every skipped package."
 (or (file-exists-p package-user-dir)
     (package-refresh-contents))
 
-(ensure-package-installed 'auto-complete 'auto-complete-auctex 'yasnippet 'auto-complete-c-headers 'cmake-mode 'rust-mode 'auctex 'company 'multiple-cursors 'neotree) ;  --> (nil nil) if iedit and magit are already installed
+(ensure-package-installed 'auto-complete 'auto-complete-auctex 'yasnippet 'auto-complete-c-headers 'cmake-mode 'rust-mode 'auctex 'company 'multiple-cursors 'neotree 'jedi) ;  --> (nil nil) if iedit and magit are already installed
 
 ;; activate installed packages
 (package-initialize)
@@ -73,6 +73,11 @@ Return a list of installed packages or nil for every skipped package."
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
+
+;; Python related
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:complete-on-dot t)
+(jedi:install-server)
 
 ;; Multiple cursor related
 ;(global-set-key (kbd "C-c C-c") 'mc/edit-lines)
