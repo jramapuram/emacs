@@ -81,7 +81,7 @@ Return a list of installed packages or nil for every skipped package."
 
 ;; Multiple cursor related
 ;(global-set-key (kbd "C-c C-c") 'mc/edit-lines)
-(setq transient-mark-mode nil)
+;TODO: This is required, but wtf! (setq transient-mark-mode nil)
 (global-set-key (kbd "C-c C-c") 'mc/mark-pop)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
