@@ -42,6 +42,24 @@ Return a list of installed packages or nil for every skipped package."
 (require 'yasnippet)
 (yas-global-mode 1)
 
+;; OSX Paste issue
+(defun pt-pbpaste ()
+	"Paste data from pasteboard."
+	(interactive)
+	(shell-command-on-region
+	 (point)
+	 (if mark-active (mark) (point))
+	 "pbpaste" nil t))
+
+(defun pt-pbcopy ()
+	"Copy region to pasteboard."
+	(interactive)
+	(print (mark))
+	(when mark-active
+		(shell-command-on-region
+		 (point) (mark) "pbcopy")
+		(kill-buffer "*Shell Command Output*")))
+
 ;; C/C++ Related
 (defun my:ac-c-header-init ()
   (require 'auto-complete-c-headers)
@@ -54,6 +72,11 @@ Return a list of installed packages or nil for every skipped package."
 ;; slime / quicklisp related
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; (setq inferior-lisp-program "/usr/local/bin/sbcl")
+
+;; Generate buffer
+(defun generate-buffer ()
+	(interactive)
+	(switch-to-buffer (make-temp-name "scratch")))
 
 ;; Rust mode
 (autoload 'rust-mode "rust-mode" nil t)
@@ -79,6 +102,13 @@ Return a list of installed packages or nil for every skipped package."
 (setq jedi:complete-on-dot t)
 (jedi:install-server)
 
+;; Eshell related
+(add-hook 'eshell-mode-hook
+	  '(lambda nil
+	     (eshell/export "EDITOR=emacsclient -n")
+	     (eshell/export "VISUAL=emacsclient -n")
+	     (add-to-list 'eshell-visual-commands "htop" "python")))
+
 ;; Multiple cursor related
 ;(global-set-key (kbd "C-c C-c") 'mc/edit-lines)
 ;TODO: This is required, but wtf! (setq transient-mark-mode nil)
@@ -93,6 +123,9 @@ Return a list of installed packages or nil for every skipped package."
 (setq shell-file-name "bash")
 (global-set-key [f1] 'eshell)
 (global-set-key [f8] 'neotree-toggle)
+(global-set-key [f2] 'generate-buffer)
+(global-set-key [?\C-x ?\C-y] 'pt-pbpaste)
+(global-set-key [?\C-x ?\M-w] 'pt-pbcopy)
 (setq tramp-default-method "ssh")
 (setq-default tab-width 2)
 (put 'erase-buffer 'disabled nil)
