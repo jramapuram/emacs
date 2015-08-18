@@ -23,7 +23,20 @@ Return a list of installed packages or nil for every skipped package."
 (or (file-exists-p package-user-dir)
     (package-refresh-contents))
 
-(ensure-package-installed 'auto-complete 'auto-complete-auctex 'yasnippet 'auto-complete-c-headers 'cmake-mode 'rust-mode 'auctex 'company 'multiple-cursors 'neotree 'jedi) ;  --> (nil nil) if iedit and magit are already installed
+(setq jr-packages  '(auto-complete
+		   auto-complete-auctex
+		   yasnippet
+		   auto-complete-c-headers
+		   cmake-mode
+		   rust-mode
+		   auctex
+		   company
+		   multiple-cursors
+		   neotree
+			 racer
+		   jedi))
+(dolist (pkg jr-packages)
+  (ensure-package-installed pkg)) ;  --> (nil nil) if iedit and magit are already installed
 
 ;; activate installed packages
 (package-initialize)
@@ -73,6 +86,14 @@ Return a list of installed packages or nil for every skipped package."
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; (setq inferior-lisp-program "/usr/local/bin/sbcl")
 
+;; Auto update packages
+(when (not package-archive-contents)
+  (package-refresh-contents))
+(dolist (pkg jr-packages)
+  (when (and (not (package-installed-p pkg))
+           (assoc pkg package-archive-contents))
+    (package-install pkg)))
+
 ;; Generate buffer
 (defun generate-buffer ()
 	(interactive)
@@ -83,9 +104,14 @@ Return a list of installed packages or nil for every skipped package."
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
 (setq racer-rust-src-path "/usr/local/include/rust/src")
 (setq racer-cmd "~/Dropbox/Apps/racer/target/release/racer")
-(add-to-list 'load-path "~/Dropbox/Apps/racer/editors/emacs")
+;(add-to-list 'load-path "~/Dropbox/Apps/racer/editors/emacs")
 (eval-after-load "rust-mode" '(require 'racer))
 (setq rust-indent-method-chain "rust-align-to-method-chain" rust-indent-offset 2)
+(add-hook 'rust-mode-hook 
+  '(lambda () 
+     (racer-activate)
+     (local-set-key (kbd "C-c .") #'racer-find-definition)
+     (local-set-key (kbd "TAB") #'racer-complete-or-indent)))
 
 ;; Latex related
 (setq TeX-auto-save t)
@@ -96,18 +122,25 @@ Return a list of installed packages or nil for every skipped package."
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
+(setenv "PATH" (concat "/Library/TeX/texbin:/usr/local/bin:" (getenv "PATH")))
 
 ;; Python related
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:complete-on-dot t)
 (jedi:install-server)
 
+;; ORG Mode related
+(require 'org)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
+
 ;; Eshell related
 (add-hook 'eshell-mode-hook
 	  '(lambda nil
 	     (eshell/export "EDITOR=emacsclient -n")
 	     (eshell/export "VISUAL=emacsclient -n")
-	     (add-to-list 'eshell-visual-commands "htop" "python")))
+	     (add-to-list 'eshell-visual-commands "python")))
 
 ;; Multiple cursor related
 ;(global-set-key (kbd "C-c C-c") 'mc/edit-lines)
@@ -126,6 +159,7 @@ Return a list of installed packages or nil for every skipped package."
 (global-set-key [f2] 'generate-buffer)
 (global-set-key [?\C-x ?\C-y] 'pt-pbpaste)
 (global-set-key [?\C-x ?\M-w] 'pt-pbcopy)
+(setq save-interprogram-paste-before-kill t)
 (setq tramp-default-method "ssh")
 (setq-default tab-width 2)
 (put 'erase-buffer 'disabled nil)
