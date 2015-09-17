@@ -184,6 +184,7 @@ Return a list of installed packages or nil for every skipped package."
 (global-set-key [?\C-x ?\C-y] 'pt-pbpaste)
 (global-set-key [?\C-x ?\M-w] 'pt-pbcopy)
 (global-set-key [tab] 'tab-indent-or-complete)
+(global-set-key (kbd "M-s M-s") 'rgrep)
 (setq save-interprogram-paste-before-kill t)
 (setq tramp-default-method "ssh")
 (setq-default tab-width 2)
