@@ -33,7 +33,8 @@ Return a list of installed packages or nil for every skipped package."
 		   company
 		   multiple-cursors
 		   neotree
-			 racer
+		   racer
+		   helm
 		   jedi))
 (dolist (pkg jr-packages)
   (ensure-package-installed pkg)) ;  --> (nil nil) if iedit and magit are already installed
@@ -47,11 +48,14 @@ Return a list of installed packages or nil for every skipped package."
 (require 'company)
 (require 'multiple-cursors)
 (require 'neotree)
+(require 'helm)
+(require 'helm-config)
 
 (ac-config-default)
 (global-auto-complete-mode t)
 ;; (add-to-list 'ac-modes 'c++-mode)
 
+;; Yasnipped related
 (require 'yasnippet)
 (yas-global-mode 1)
 
@@ -107,11 +111,15 @@ Return a list of installed packages or nil for every skipped package."
 ;(add-to-list 'load-path "~/Dropbox/Apps/racer/editors/emacs")
 (eval-after-load "rust-mode" '(require 'racer))
 (setq rust-indent-method-chain "rust-align-to-method-chain" rust-indent-offset 2)
+(add-hook 'rust-mode-hook #'racer-mode)
+(add-hook 'racer-mode-hook #'eldoc-mode)
 (add-hook 'rust-mode-hook 
   '(lambda () 
      (racer-activate)
+     (company-mode 1)
      (local-set-key (kbd "C-c .") #'racer-find-definition)
-     (local-set-key (kbd "TAB") #'racer-complete-or-indent)))
+     (setq company-tooltip-align-annotations t)
+     (local-set-key (kbd "TAB") #'company-indent-or-complete-common)))
 
 ;; Latex related
 (setq TeX-auto-save t)
@@ -128,6 +136,22 @@ Return a list of installed packages or nil for every skipped package."
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:complete-on-dot t)
 (jedi:install-server)
+
+;; Helm related
+;;(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+
+(when (executable-find "curl")
+  (setq helm-google-suggest-use-curl-p t))
+
+(setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+      helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+      helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+      helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+      helm-ff-file-name-history-use-recentf t)
+
+(helm-mode 1)
 
 ;; ORG Mode related
 (require 'org)
@@ -159,6 +183,7 @@ Return a list of installed packages or nil for every skipped package."
 (global-set-key [f2] 'generate-buffer)
 (global-set-key [?\C-x ?\C-y] 'pt-pbpaste)
 (global-set-key [?\C-x ?\M-w] 'pt-pbcopy)
+(global-set-key [tab] 'tab-indent-or-complete)
 (setq save-interprogram-paste-before-kill t)
 (setq tramp-default-method "ssh")
 (setq-default tab-width 2)
