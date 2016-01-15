@@ -40,13 +40,17 @@ values."
      ;;        shell-default-position 'bottom)
      spell-checking
      syntax-checking
-     ;; version-control
+     version-control
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(key-chord)
+   dotspacemacs-additional-packages
+   '(
+     key-chord
+     irony
+     )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -257,8 +261,14 @@ layers configuration. You are free to put any user code."
   (setq mac-command-modifier 'meta)
 
   ;; rust conf
-  (if (eq system-type 'gnu/linux) (setq racer-cmd "~/Dropbox/Apps/racer_linux/target/release/racer"))
-  (if (eq system-type 'darwin) (setq racer-cmd "~/Dropbox/Apps/racer/target/release/racer"))
+  (if (eq system-type 'gnu/linux)
+      (progn
+        (setenv "PATH" (concat (getenv "PATH") ":~/Dropbox/Apps/racer_linux/target/release"))
+        (setq exec-path (append exec-path '("~/Dropbox/Apps/racer_linux/target/release")))))
+  (if (eq system-type 'darwin)
+      (progn
+        (setenv "PATH" (concat (getenv "PATH") ":~/Dropbox/Apps/racer/target/release"))
+        (setq exec-path (append exec-path '("~/Dropbox/Apps/racer/target/release")))))
   (setq racer-rust-src-path "/usr/local/include/rust/src")
   (eval-after-load "rust-mode" '(require 'racer))
   (setq rust-indent-method-chain "rust-align-to-method-chain" rust-indent-offset 2)
@@ -289,7 +299,7 @@ layers configuration. You are free to put any user code."
   ;; parse cuda properly
   (add-to-list 'auto-mode-alist '("\\.cu\\'" . c++-mode))
 
-
+  ;; C related
   (add-hook 'c++-mode-hook 'irony-mode)
   (add-hook 'c-mode-hook 'irony-mode)
   (add-hook 'objc-mode-hook 'irony-mode)
